@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Laravel\Socialite\Facades\Socialite;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class GoogleAuthController extends Controller
 {
@@ -33,9 +34,11 @@ class GoogleAuthController extends Controller
 
                 auth()->loginUsingId($newUser->id);
             }
-            return redirect('/');
+//            alert()->error('Login with Google was successful.');
+            Alert::success('Success Title', 'Success Message'); //todo : sweet alert does not work, fix it.
+            return redirect('/home');
         } catch (\Exception $error) {
-            return 'You have Error for login with google!';
+            redirect('/login');
         }
     }
 }

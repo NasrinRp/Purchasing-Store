@@ -15,6 +15,8 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    <!-- Include SweetAlert CSS -->
+    <link rel="stylesheet" href="{{ asset('vendor/sweetalert/sweetalert.css') }}">
 </head>
 <body>
     <div id="app">
@@ -77,4 +79,5 @@
         </main>
     </div>
 </body>
+@include('sweetalert::alert')
 </html>

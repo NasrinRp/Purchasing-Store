@@ -14,3 +14,7 @@ Route::prefix('auth/google')->name('auth.google.')->group(function () {
 });
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('secret-route', function () {
+    return 'You Confirmed Your Password because this content is sensitive.';
+})->middleware(['auth', 'password.confirm']);
