@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -20,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'two_factor_auth',
+        'phone_number',
     ];
 
     /**
@@ -43,5 +46,18 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isTwoFactorAuth($key): bool
+    {
+        return $this->two_factor_auth == $key;
+    }
+
+    public function activeCodes(): HasMany
+    {
+        return $this->hasMany(
+            ActiveCode::class,
+            'user_id'
+        );
     }
 }
