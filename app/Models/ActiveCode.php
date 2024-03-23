@@ -40,7 +40,6 @@ class ActiveCode extends Model
                 'code' => $code,
                 'expired_at' => now()->addMinutes(10)
             ]);
-            //TODO send code for user phone number
         }
 
         return $code;

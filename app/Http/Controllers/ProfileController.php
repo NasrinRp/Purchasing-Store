@@ -31,7 +31,7 @@ class ProfileController extends Controller
                 ]);
             } else {
                 $code = ActiveCode::generateCode($request->user());
-                return $code;
+                //TODO send code for user phone number
                 return redirect(route('profile.get-phone-verify'));
             }
         } else if ($data['type'] == 'off') {
