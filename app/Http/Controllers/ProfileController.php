@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ActiveCode;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class ProfileController extends Controller
 {
@@ -27,25 +28,33 @@ class ProfileController extends Controller
         if ($data['type'] == 'sms') {
             if ($request->user()->phone_number == $data['phone']) {
                 $request->user()->update([
-                   'two_factor_auth' => 'sms'
+                    'two_factor_type' => 'sms'
                 ]);
             } else {
                 $code = ActiveCode::generateCode($request->user());
                 //TODO send code for user phone number
+                // flash session keep $data[phone] for one route after itself
+                $request->session()->flash('phone', $data['phone']);
                 return redirect(route('profile.get-phone-verify'));
             }
         } else if ($data['type'] == 'off') {
             $request->user()->update([
-                'two_factor_auth' => 'off',
+                'two_factor_type' => 'off',
             ]);
         }
 
         return back();
     }
 
-    public function getPhoneVerify()
+    public function getPhoneVerify(Request $request)
     {
-        return view('profile.phone-verify');
+        if ($request->session()->has('phone')) {
+            // keep phone data one route more
+            $request->session()->reflash();
+            return view('profile.phone-verify');
+        }
+
+        return view('profile.index');
     }
 
     public function postPhoneVerify(Request $request)
@@ -53,6 +62,20 @@ class ProfileController extends Controller
         $data = $request->validate([
             'token' => 'required'
         ]);
-        return $request->token;
+
+        $status = ActiveCode::verifyCode($data['token'], $request->user());
+
+        if ($status) {
+            $request->user()->activeCodes()->delete();
+            $request->user()->update([
+                'two_factor_type' => 'sms',
+                'phone_number' => $request->session()->get('phone')
+            ]);
+            Alert::success('Success', 'Your phone has been verified successfully!')->persistent(true);
+            return redirect(route('profile.two-factor-auth'));
+        } else {
+            Alert::error('Error', 'Verification failed. Please try again.')->persistent(true);
+            return redirect(route('profile.get-phone-verify'));
+        }
     }
 }

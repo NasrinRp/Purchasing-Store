@@ -55,5 +55,11 @@ class ActiveCode extends Model
         return $user->activeCodes()->where('expired_at', '>', now())->first();
     }
 
-
+    public function scopeVerifyCode($query, $code, $user): bool
+    {
+        return !! $user->activeCodes()
+            ->whereCode($code)
+            ->where('expired_at', '>', now())
+            ->first();
+    }
 }

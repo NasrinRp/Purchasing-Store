@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\Auth\TokenController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,9 +18,16 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::prefix('auth/google')->name('auth.google.')->group(function () {
-    Route::get('/', [GoogleAuthController::class, 'redirect'])->name('redirect');
-    Route::get('/callback', [GoogleAuthController::class, 'callback'])->name('callback');
+Route::prefix('auth')->name('auth.')->group(function () {
+    Route::prefix('/google')->name('google.')->group(function () {
+        Route::get('/', [GoogleAuthController::class, 'redirect'])->name('redirect');
+        Route::get('/callback', [GoogleAuthController::class, 'callback'])->name('callback');
+    });
+
+    Route::prefix('/token')->name('token.')->group(function () {
+        Route::get('/', [TokenController::class, 'getToken'])->name('get-token');
+        Route::post('/', [TokenController::class, 'postToken'])->name('post-token');
+    });
 });
 
 Route::middleware('auth')->group(function () {

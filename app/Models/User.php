@@ -21,7 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'two_factor_auth',
+        'two_factor_type',
         'phone_number',
     ];
 
@@ -50,7 +50,12 @@ class User extends Authenticatable
 
     public function isTwoFactorAuth($key): bool
     {
-        return $this->two_factor_auth == $key;
+        return $this->two_factor_type == $key;
+    }
+
+    public function isTwoFactorAuthEnable(): bool
+    {
+        return $this->two_factory_type != 'off';
     }
 
     public function activeCodes(): HasMany
