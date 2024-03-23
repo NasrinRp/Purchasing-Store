@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActiveCode;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
@@ -29,8 +30,8 @@ class ProfileController extends Controller
                    'two_factor_auth' => 'sms'
                 ]);
             } else {
-                // create a unique code
-                // send it to user
+                $code = ActiveCode::generateCode($request->user());
+                return $code;
                 return redirect(route('profile.get-phone-verify'));
             }
         } else if ($data['type'] == 'off') {
