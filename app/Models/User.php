@@ -55,7 +55,7 @@ class User extends Authenticatable
 
     public function isTwoFactorAuthEnable(): bool
     {
-        return $this->two_factory_type != 'off';
+        return $this->two_factor_type !== null && $this->two_factor_type !== 'off';
     }
 
     public function activeCodes(): HasMany
