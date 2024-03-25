@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActiveCode;
+use App\Notifications\ActiveCodeNotification;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 
@@ -32,7 +33,7 @@ class ProfileController extends Controller
                 ]);
             } else {
                 $code = ActiveCode::generateCode($request->user());
-                //TODO send code for user phone number
+                $request->user()->notify(new ActiveCodeNotification($code));
                 // flash session keep $data[phone] for one route after itself
                 $request->session()->flash('phone', $data['phone']);
                 return redirect(route('profile.get-phone-verify'));
